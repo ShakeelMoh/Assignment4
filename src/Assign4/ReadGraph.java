@@ -18,6 +18,9 @@ import java.util.logging.Logger;
  *
  * @author shakeel
  */
+
+//This class reads in a file detailing the graph routes and
+//creates a text file in a specific format to be read by the graph class
 public class ReadGraph {
 
     public static int numNodes;
@@ -30,10 +33,10 @@ public class ReadGraph {
     public static ArrayList<Integer> victimNodes;
     public static int numVictims;
 
-    public static void main(String[] args) {
+    public void read(){
 
         try {
-            PrintWriter wr = new PrintWriter("Graph.txt", "UTF-8");
+            PrintWriter wr = new PrintWriter("Data/Graph.txt", "UTF-8");
 
             hospitalNodes = new ArrayList<>();
             victimNodes = new ArrayList<>();
@@ -118,4 +121,15 @@ public class ReadGraph {
 
     }
 
+    public ArrayList<Integer> getHospitalNodes() {
+        return hospitalNodes;
+    }
+
+    public ArrayList<Integer> getVictimNodes() {
+        return victimNodes;
+    }
+
+    
+    
+    
 }

@@ -7,6 +7,7 @@ package Assign4;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -20,13 +21,14 @@ import java.util.StringTokenizer;
  */
 public class Graph {
 
+    static ReadGraph r;
+    public static boolean flag;
     //Init variable for unknown lengths
     public static final double INFINITY = Double.MAX_VALUE;
-    
+
     //Creates vertex map
     private Map<String, Vertex> vertexMap = new HashMap<String, Vertex>();
 
-    
     //Methods
     /**
      * If vertexName is not present, add it to vertexMap. In either case, return
@@ -55,17 +57,19 @@ public class Graph {
      * It calls recursive routine to print shortest path to destNode after a
      * shortest path algorithm has run.
      */
-    public void printPath(String destName) {
+    public double printPath(String destName) {
         Vertex w = vertexMap.get(destName);
         if (w == null) {
             throw new NoSuchElementException("Destination vertex not found");
         } else if (w.dist == INFINITY) {
             System.out.println(destName + " is unreachable");
         } else {
-            System.out.print("(Cost is: " + w.dist + ") ");
+            //System.out.print("(Cost is: " + w.dist + ") ");
             printPath(w);
-            System.out.println();
+
+            //System.out.println();
         }
+        return w.dist;
     }
 
     /**
@@ -74,10 +78,43 @@ public class Graph {
      */
     private void printPath(Vertex dest) {
         if (dest.prev != null) {
-            printPath(dest.prev);
-            System.out.print(" to ");
+            if (flag == false) {
+                printPath(dest.prev);
+                System.out.print(" ");
+            }
+
         }
         System.out.print(dest.name);
+    }
+
+    public double calcPath(String destName) {
+        Vertex w = vertexMap.get(destName);
+        if (w == null) {
+            throw new NoSuchElementException("Destination vertex not found");
+        } else if (w.dist == INFINITY) {
+            //System.out.println(destName + " is unreachable");
+        } else {
+            //System.out.print("(Cost is: " + w.dist + ") ");
+            calcPath(w);
+
+            //System.out.println();
+        }
+        return w.dist;
+    }
+
+    /**
+     * Recursive routine to print shortest path to dest after running shortest
+     * path algorithm. The path is known to exist.
+     */
+    private void calcPath(Vertex dest) {
+        if (dest.prev != null) {
+            if (flag == false) {
+                calcPath(dest.prev);
+                //System.out.print(" ");
+            }
+
+        }
+        //System.out.print(dest.name);
     }
 
     /**
@@ -138,32 +175,85 @@ public class Graph {
     }
 
     public static boolean processRequest(Scanner in, Graph g) {
-        try {
-            System.out.print("Enter start node:");
-            String startName = in.nextLine();
+        //Read graph instantiated to access victim and hospital arraylists
+        ReadGraph r = new ReadGraph();
+        r.read();
+        ArrayList<Integer> vNode = r.getVictimNodes();
+        ArrayList<Integer> hNode = r.getHospitalNodes();
 
-            System.out.print("Enter destination node:");
-            String destName = in.nextLine();
+        System.out.println("START" + "\n\n");
+        for (int i = 0; i < vNode.size(); i++) {
 
-            System.out.print("Using Dijkstra's shortest path algorithm... ");
+            System.out.println("victim " + vNode.get(i));
+            //g.dijkstra(vNode.get(i) + "");
 
-            g.dijkstra(startName);
-            g.printPath(destName);
+            double shortest = INFINITY;
+            for (int j = 0; j < hNode.size(); j++) {
 
-            g.printPath(destName);
+                double currentShort = 0;
+                flag = false;
 
-        } catch (NoSuchElementException e) {
-            return false;
+                //System.out.println("hospital " + hNode.get(j));
+                g.dijkstra(hNode.get(j) + "");//DIJK
+                currentShort += g.calcPath(vNode.get(i) + "");//PATH
+
+                
+                g.dijkstra(vNode.get(i) + "");//DIJK
+                flag = true;
+                currentShort += g.calcPath(hNode.get(j) + "");//PATH
+
+                //System.out.println(currentShort);
+                if (currentShort < shortest) {
+                    shortest = currentShort;
+
+                }
+
+            }
+
+            for (int k = 0; k < hNode.size(); k++) {
+                flag = false;
+                double check = 0;
+                g.dijkstra(hNode.get(k) + "");
+                check += g.calcPath(vNode.get(i) + "");
+                g.dijkstra(vNode.get(i) + "");
+
+                check += g.calcPath(hNode.get(k) + "");
+                if (check == shortest) {
+                    System.out.println("hospital " + hNode.get(k));
+                    g.dijkstra(hNode.get(k) + "");
+                    g.printPath(vNode.get(i) + "");
+                    System.out.print(" ");
+                    g.dijkstra(vNode.get(i) + "");
+                    flag = true;
+                    g.printPath(hNode.get(k) + "");
+                    System.out.println();
+                }
+            }
+
         }
-        return true;
+        return false;
+//            System.out.print("Enter start node:");
+//            String startName = in.nextLine();
+//
+//            System.out.print("Enter destination node:");
+//            String destName = in.nextLine();
+//
+//            System.out.print("Using Dijkstra's shortest path algorithm... ");
+//
+//            g.dijkstra(startName);
+//            g.printPath(destName);
+//
+//            g.printPath(destName);
+
     }
 
     @SuppressWarnings("empty-statement")
     public static void main(String[] args) {
         Graph g = new Graph();
+
         try {
             //FileReader fin = new FileReader(args[0]);
-            FileReader fin = new FileReader("Data/Graph1.txt");
+            FileReader fin = new FileReader("Data/Graph.txt");
             Scanner graphFile = new Scanner(fin);
 
             // Read the edges and insert
