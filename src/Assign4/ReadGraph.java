@@ -23,7 +23,7 @@ import java.util.logging.Logger;
 //creates a text file in a specific format to be read by the graph class
 public class ReadGraph {
 
-    public static int numNodes;
+    public int numNodes;
     public static int sourceNode;
     public static int destNode;
     public static int weight;
@@ -46,6 +46,7 @@ public class ReadGraph {
 
                 //Get number of vertexes in the graph
                 numNodes = Integer.parseInt(sc.nextLine());
+               
                 //Set vertex array size
 
                 //Create vertexes
@@ -92,6 +93,7 @@ public class ReadGraph {
                 }
 
                 numVictims = Integer.parseInt(sc.nextLine());
+
 
                 line = sc.nextLine();
                 numbers = line.split(" ");

@@ -26,9 +26,9 @@ public class Vertex {
         reset();
     }
 
-    public void reset() //  { dist = Graph.INFINITY; prev = null; pos = null; scratch = 0; }    
+    public void reset() //  { dist = SimulatorOne.INFINITY; prev = null; pos = null; scratch = 0; }    
     {
-        dist = Graph.INFINITY;
+        dist = SimulatorOne.INFINITY;
         prev = null;
         scratch = 0;
     }

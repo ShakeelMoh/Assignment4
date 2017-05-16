@@ -19,7 +19,7 @@ import java.util.StringTokenizer;
  *
  * @author shakeel
  */
-public class Graph {
+public class SimulatorOne {
 
     static ReadGraph r;
     public static boolean flag;
@@ -27,7 +27,7 @@ public class Graph {
     public static final double INFINITY = Double.MAX_VALUE;
 
     //Creates vertex map
-    private Map<String, Vertex> vertexMap = new HashMap<String, Vertex>();
+    public Map<String, Vertex> vertexMap = new HashMap<String, Vertex>();//Changed from private
 
     //Methods
     /**
@@ -77,6 +77,36 @@ public class Graph {
      * path algorithm. The path is known to exist.
      */
     private void printPath(Vertex dest) {
+        if (dest.prev != null) {
+            if (flag == false) {
+                printPath(dest.prev);
+                System.out.print(" ");
+            }
+
+        }
+        System.out.print(dest.name);
+    }
+    
+        public double printCostPath(String destName) {
+        Vertex w = vertexMap.get(destName);
+        if (w == null) {
+            throw new NoSuchElementException("Destination vertex not found");
+        } else if (w.dist == INFINITY) {
+            System.out.println(destName + " is unreachable");
+        } else {
+            //System.out.print("(Cost is: " + w.dist + ") ");
+            printPath(w);
+
+            //System.out.println();
+        }
+        return w.dist;
+    }
+
+    /**
+     * Recursive routine to print shortest path to dest after running shortest
+     * path algorithm. The path is known to exist.
+     */
+    private void printCostPath(Vertex dest) {
         if (dest.prev != null) {
             if (flag == false) {
                 printPath(dest.prev);
@@ -174,14 +204,14 @@ public class Graph {
         }
     }
 
-    public static boolean processRequest(Scanner in, Graph g) {
+    public static boolean processRequest(Scanner in, SimulatorOne g) {
         //Read graph instantiated to access victim and hospital arraylists
         ReadGraph r = new ReadGraph();
         r.read();
         ArrayList<Integer> vNode = r.getVictimNodes();
         ArrayList<Integer> hNode = r.getHospitalNodes();
 
-        System.out.println("START" + "\n\n");
+        System.out.println();
         for (int i = 0; i < vNode.size(); i++) {
 
             System.out.println("victim " + vNode.get(i));
@@ -249,7 +279,7 @@ public class Graph {
 
     @SuppressWarnings("empty-statement")
     public static void main(String[] args) {
-        Graph g = new Graph();
+        SimulatorOne g = new SimulatorOne();
 
         try {
             //FileReader fin = new FileReader(args[0]);
